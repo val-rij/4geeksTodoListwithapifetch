@@ -1,24 +1,38 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-//include images into your bundle
-import rigoImage from "../../img/rigo-baby.jpg";
 
-//create your first component
+
 const Home = () => {
+	const [todoList, setTodoList] = useState([]);
+
 	return (
-		<div className="text-center">
-			<h1 className="text-center mt-5">Hello Rigo!</h1>
-			<p>
-				<img src={rigoImage} />
-			</p>
-			<a href="#" className="btn btn-success">
-				If you see this green button... bootstrap is working...
-			</a>
-			<p>
-				Made by{" "}
-				<a href="http://www.4geeksacademy.com">4Geeks Academy</a>, with
-				love!
-			</p>
+		<div className="mt-5">
+			<div className="container">
+				<h1> My ToDos </h1>
+				<div className="row">
+						<div className="col-4 mx-auto">
+							<li><input 
+							className= "text-center" 
+							placeholder="Add toDo"
+							onKeyUp={(e)=>{
+								if(e.key == "Enter" && e.target.value.trim() != ""){
+									setTodoList([...todoList, e.target.value]);
+									e.target.value = "";
+								}}}/></li>
+							{ todoList.map((todo, index)=>{
+									return (<div key={index} className="row alert border">
+												<p className="col-8">{todo}</p>
+												<p className="offset-2 col-2" onClick={()=>{
+													setTodoList(todoList.filter((e, i)=> i != index));
+												 
+												}}><i class="far fa-times-circle"></i></p>
+											</div>)
+								})}	
+								<div className="row p-3 border"> {todoList.length >0 ? `${todoList.length} todos left` : "No todos left"} </div>
+						</div>
+				</div>
+			</div>
+				
 		</div>
 	);
 };
