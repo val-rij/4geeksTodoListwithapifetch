@@ -4,6 +4,28 @@ import React, { useEffect, useState } from "react";
 
 const Home = () => {
 	const [todoList, setTodoList] = useState([]);
+	useEffect(()=>{
+		getTodos();
+	},[])
+
+	const getTodos = async() => {
+		const response = await fetch("https://assets.breatheco.de/apis/fake/todos/user/valrij");
+		const data = await response.json();
+		setTodoList(data);
+	}
+
+	const updateTodos = async(listUpdated) => {
+		const response = await fetch("https://assets.breatheco.de/apis/fake/todos/user/valrij", {
+			method:"PUT", 
+			headers: {"Content-Type": "application/json"},
+			body: JSON.stringify(listUpdated)
+		});
+
+		if(response.ok){
+			getTodos()
+			
+		}
+	}
 
 	return (
 		<div className="mt-5">
@@ -16,19 +38,19 @@ const Home = () => {
 							placeholder="Add toDo"
 							onKeyUp={(e)=>{
 								if(e.key == "Enter" && e.target.value.trim() != ""){
-									setTodoList([...todoList, e.target.value]);
+									updateTodos([...todoList, {done: false, label: e.target.value}])
 									e.target.value = "";
 								}}}/></li>
 							{ todoList.map((todo, index)=>{
-									return (<div key={index} className="row alert border">
-												<p className="col-8">{todo}</p>
+									if(todo.label != "sample task") {return (<div key={index} className="row alert border">
+												<p className="col-8">{todo.label}</p>
 												<p className="offset-2 col-2" onClick={()=>{
-													setTodoList(todoList.filter((e, i)=> i != index));
+													updateTodos(todoList.filter((e, i)=> i != index));
 												 
 												}}><i class="far fa-times-circle"></i></p>
-											</div>)
+											</div>)}
 								})}	
-								<div className="row p-3 border"> {todoList.length >0 ? `${todoList.length} todos left` : "No todos left"} </div>
+								<div className="row p-3 border"> {todoList.length >1 ? `${todoList.length-1} todos left` : "No todos left"} </div>
 						</div>
 				</div>
 			</div>
